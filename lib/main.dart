@@ -54,6 +54,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _decrementCounter() {
+    if (_counter > 0) {
+      setState(() {
+        _counter = _counter - 100;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,10 +96,26 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Adicione 100ml',
-        child: Icon(Icons.add),
+      floatingActionButton: Wrap(
+        direction: Axis.vertical,
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 10, left: 3),
+            child: FloatingActionButton.small(
+              onPressed: _decrementCounter,
+              tooltip: 'Remover 100 ml',
+              child: Icon(Icons.remove),
+              backgroundColor: Colors.red,
+            ),
+          ),
+          Container(
+            child: FloatingActionButton(
+              onPressed: _incrementCounter,
+              tooltip: 'Adicionar 100 ml',
+              child: Icon(Icons.add),
+            ),
+          ),
+        ],
       ),
     );
   }
