@@ -2,7 +2,6 @@ image:
   file: .gitpod.Dockerfile
 tasks:
   - init: |
-      flutter channel beta
       flutter upgrade
 
       flutter config --enable-web
@@ -72,3 +71,5 @@ ports:
 vscode:
   extensions:
     - dart-code.flutter
+    - dart-code.dart-code
+    - editorconfig.editorconfig
