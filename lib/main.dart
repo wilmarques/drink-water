@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,15 +31,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -46,20 +38,71 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  Future<SharedPreferences> _preferences = SharedPreferences.getInstance();
+  late Future<int> _counter;
 
-  void _incrementCounter() {
+  Future<int> _getLastEditDay() async {
+    final preferences = await _preferences;
+    return preferences.getInt('last_edit_day') ?? 0;
+  }
+
+  Future<bool> _saveLastEditDate() async {
+    final todayDay = DateTime.now().day;
+    final preferences = await _preferences;
+    return preferences.setInt('last_edit_day', todayDay);
+  }
+
+  Future<int> _getWaterIntakeValue() async {
+    final preferences = await _preferences;
+    return preferences.getInt('intake') ?? 0;
+  }
+
+  Future<bool> _storeWaterIntakeValue(int value) async {
+    final preferences = await _preferences;
+    return preferences.setInt('intake', value);
+  }
+
+  Future<void> _incrementCounter() async {
+    final int currentCounter = await _getWaterIntakeValue();
+    final int incrementedCounter = currentCounter + 100;
+    _saveLastEditDate();
+
     setState(() {
-      _counter = _counter + 100;
+      _counter = _storeWaterIntakeValue(incrementedCounter).then((success) {
+        return incrementedCounter;
+      });
     });
   }
 
-  void _decrementCounter() {
-    if (_counter > 0) {
-      setState(() {
-        _counter = _counter - 100;
-      });
+  Future<void> _decrementCounter() async {
+    final int currentCounter = await _getWaterIntakeValue();
+
+    if (currentCounter == 0) {
+      return;
     }
+
+    final int decrementedCounter = currentCounter - 100;
+    _saveLastEditDate();
+
+    setState(() {
+      _counter = _storeWaterIntakeValue(decrementedCounter).then((success) {
+        return decrementedCounter;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _counter = _getLastEditDay().then((lastEditDay) {
+      if (lastEditDay == DateTime.now().day) {
+        return _getWaterIntakeValue();
+      } else {
+        _storeWaterIntakeValue(0);
+        return 0;
+      }
+    });
   }
 
   @override
@@ -70,29 +113,28 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
               'Quantidade de água ingerida hoje',
             ),
-            Text(
-              '$_counter ml',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            FutureBuilder<int>(
+              future: _counter,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const CircularProgressIndicator();
+                  default:
+                    if (snapshot.hasError) {
+                      return Text('Falha: ${snapshot.error}');
+                    }
+                    return Text(
+                      '${snapshot.data} ml',
+                      style: Theme.of(context).textTheme.headline4,
+                    );
+                }
+              },
+            )
           ],
         ),
       ),
