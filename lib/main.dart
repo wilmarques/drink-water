@@ -31,6 +31,7 @@ class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
+  final int defaultIntakeValue = 200;
 
   @override
   Widget build(BuildContext context) {
@@ -54,17 +55,18 @@ class MyHomePage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: Wrap(
-        direction: Axis.vertical,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
-            margin: EdgeInsets.only(bottom: 10, left: 3),
+            margin: EdgeInsets.only(bottom: 10),
             child: FloatingActionButton.small(
               onPressed: () {
                 final waterIntake = context.read<WaterIntake>();
-                waterIntake.decrease();
+                waterIntake.decrease(ammount: defaultIntakeValue);
               },
-              tooltip: 'Remover 100 ml',
+              tooltip: 'Remover $defaultIntakeValue ml',
               child: Icon(Icons.remove),
               backgroundColor: Colors.red,
             ),
@@ -73,9 +75,9 @@ class MyHomePage extends StatelessWidget {
             child: FloatingActionButton(
               onPressed: () {
                 final waterIntake = context.read<WaterIntake>();
-                waterIntake.increment();
+                waterIntake.increment(ammount: defaultIntakeValue);
               },
-              tooltip: 'Adicionar 100 ml',
+              tooltip: 'Adicionar $defaultIntakeValue ml',
               child: Icon(Icons.add),
             ),
           ),
