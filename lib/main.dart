@@ -1,106 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+
+import 'water_intake.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => WaterIntake(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  final String title = 'Drink Water';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Drink Water',
+      title: title,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Drink Water'),
+      home: MyHomePage(title: title),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  Future<SharedPreferences> _preferences = SharedPreferences.getInstance();
-  late Future<int> _counter;
-
-  Future<int> _getLastEditDay() async {
-    final preferences = await _preferences;
-    return preferences.getInt('last_edit_day') ?? 0;
-  }
-
-  Future<bool> _saveLastEditDate() async {
-    final todayDay = DateTime.now().day;
-    final preferences = await _preferences;
-    return preferences.setInt('last_edit_day', todayDay);
-  }
-
-  Future<int> _getWaterIntakeValue() async {
-    final preferences = await _preferences;
-    return preferences.getInt('intake') ?? 0;
-  }
-
-  Future<bool> _storeWaterIntakeValue(int value) async {
-    final preferences = await _preferences;
-    return preferences.setInt('intake', value);
-  }
-
-  Future<void> _incrementCounter() async {
-    final int currentCounter = await _getWaterIntakeValue();
-    final int incrementedCounter = currentCounter + 100;
-    _saveLastEditDate();
-
-    setState(() {
-      _counter = _storeWaterIntakeValue(incrementedCounter).then((success) {
-        return incrementedCounter;
-      });
-    });
-  }
-
-  Future<void> _decrementCounter() async {
-    final int currentCounter = await _getWaterIntakeValue();
-
-    if (currentCounter == 0) {
-      return;
-    }
-
-    final int decrementedCounter = currentCounter - 100;
-    _saveLastEditDate();
-
-    setState(() {
-      _counter = _storeWaterIntakeValue(decrementedCounter).then((success) {
-        return decrementedCounter;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _counter = _getLastEditDay().then((lastEditDay) {
-      if (lastEditDay == DateTime.now().day) {
-        return _getWaterIntakeValue();
-      } else {
-        _storeWaterIntakeValue(0);
-        return 0;
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -109,23 +45,12 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'Quantidade de água ingerida hoje',
             ),
-            FutureBuilder<int>(
-              future: _counter,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const CircularProgressIndicator();
-                  default:
-                    if (snapshot.hasError) {
-                      return Text('Falha: ${snapshot.error}');
-                    }
-                    return Text(
-                      '${snapshot.data} ml',
-                      style: Theme.of(context).textTheme.headline4,
-                    );
-                }
-              },
-            )
+            Consumer<WaterIntake>(
+              builder: (context, waterIntake, child) => Text(
+                '${waterIntake.current} ml',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ),
           ],
         ),
       ),
@@ -135,7 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             margin: EdgeInsets.only(bottom: 10, left: 3),
             child: FloatingActionButton.small(
-              onPressed: _decrementCounter,
+              onPressed: () {
+                final waterIntake = context.read<WaterIntake>();
+                waterIntake.decrease();
+              },
               tooltip: 'Remover 100 ml',
               child: Icon(Icons.remove),
               backgroundColor: Colors.red,
@@ -143,7 +71,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: FloatingActionButton(
-              onPressed: _incrementCounter,
+              onPressed: () {
+                final waterIntake = context.read<WaterIntake>();
+                waterIntake.increment();
+              },
               tooltip: 'Adicionar 100 ml',
               child: Icon(Icons.add),
             ),
