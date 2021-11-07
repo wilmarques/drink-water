@@ -11,16 +11,15 @@ class WaterIntakeStorage {
     box = await Hive.openBox('water_intake');
   }
 
-  Future<int> getWaterIntake() async {
-    final lastEditDay = await _getLastEditDate();
+  int getWaterIntake() {
+    final lastEditDay = _getLastEditDate();
     final today = DateTime.now().day;
     if (lastEditDay == 0 || lastEditDay != today) {
       storeWaterIntake(0);
       return 0;
     }
 
-    final storedIntake = box.get('intake');
-    return storedIntake ?? 0;
+    return box.get('intake', defaultValue: 0);
   }
 
   Future<void> storeWaterIntake(int value) async {
@@ -28,8 +27,8 @@ class WaterIntakeStorage {
     return await box.put('intake', value);
   }
 
-  Future<int> _getLastEditDate() async {
-    return await box.get('last_edit_date') ?? 0;
+  int _getLastEditDate() {
+    return box.get('last_edit_date', defaultValue: 0);
   }
 
   Future<void> _saveLastEditDate() async {

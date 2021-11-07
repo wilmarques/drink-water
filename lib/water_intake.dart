@@ -3,17 +3,21 @@ import 'package:flutter/foundation.dart';
 import 'water_intake_storage.dart';
 
 class WaterIntake extends ChangeNotifier {
-  late int _current;
-  WaterIntakeStorage storage = WaterIntakeStorage();
+  int _current = 0;
+  late WaterIntakeStorage storage;
 
-  int get current => _current;
+  int get current {
+    _current = storage.getWaterIntake();
+    return _current;
+  }
 
   WaterIntake() {
     _initializeData();
   }
 
   void _initializeData() async {
-    _current = await storage.getWaterIntake();
+    storage = WaterIntakeStorage();
+    _current = storage.getWaterIntake();
     notifyListeners();
   }
 
