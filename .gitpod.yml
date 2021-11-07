@@ -1,10 +1,7 @@
 image:
   file: .gitpod/Dockerfile
 tasks:
-  # flutter run --web-port 8080
   - init: |
-      flutter upgrade
-      flutter config --enable-web
       flutter doctor
       flutter pub get
 
@@ -13,6 +10,10 @@ ports:
     onOpen: ignore
     # vnc
   - port: 6080
+    onOpen: ignore
+  - port: 5037
+    onOpen: ignore
+  - port: 9100
     onOpen: ignore
 
 vscode:

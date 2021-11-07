@@ -20,11 +20,11 @@ RUN cd /home/gitpod \
 RUN flutter/bin/flutter precache
 RUN echo 'export PATH="$PATH:/home/gitpod/flutter/bin"' >> /home/gitpod/.bashrc
 
-# Install Open JDK
-USER root
-RUN apt update \
-    && apt install openjdk-8-jdk -y \
-    && update-java-alternatives --set java-1.8.0-openjdk-amd64
+# # Install Open JDK
+# USER root
+# RUN apt update \
+#     && apt install openjdk-8-jdk -y \
+#     && update-java-alternatives --set java-1.8.0-openjdk-amd64
 
 # # Install SDK Manager
 # USER gitpod
@@ -43,7 +43,6 @@ RUN apt update \
 # RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-30" "emulator"
 # RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-30;google_apis;x86_64"
 # RUN echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n avd28 -k "system-images;android-30;google_apis;x86_64"
-
 
 # Install Google Chrome
 USER root
