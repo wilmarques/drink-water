@@ -1,5 +1,5 @@
 image:
-  file: .gitpod/.gitpod.Dockerfile
+  file: .gitpod/Dockerfile
 tasks:
   # flutter run --web-port 8080
   - init: |
