@@ -1,34 +1,39 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
 class WaterIntakeStorage {
-  Future<SharedPreferences> _preferences = SharedPreferences.getInstance();
+  late Box box;
+
+  WaterIntakeStorage() {
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    box = await Hive.openBox('water_intake');
+  }
 
   Future<int> getWaterIntake() async {
-    final preferences = await _preferences;
-
     final lastEditDay = await _getLastEditDate();
     final today = DateTime.now().day;
     if (lastEditDay == 0 || lastEditDay != today) {
+      storeWaterIntake(0);
       return 0;
     }
 
-    return preferences.getInt('intake') ?? 0;
+    final storedIntake = box.get('intake');
+    return storedIntake ?? 0;
   }
 
-  Future<bool> storeWaterIntake(int value) async {
-    final preferences = await _preferences;
+  Future<void> storeWaterIntake(int value) async {
     _saveLastEditDate();
-    return preferences.setInt('intake', value);
+    return await box.put('intake', value);
   }
 
   Future<int> _getLastEditDate() async {
-    final preferences = await _preferences;
-    return preferences.getInt('last_edit_date') ?? 0;
+    return await box.get('last_edit_date') ?? 0;
   }
 
-  Future<bool> _saveLastEditDate() async {
+  Future<void> _saveLastEditDate() async {
     final todayDay = DateTime.now().day;
-    final preferences = await _preferences;
-    return preferences.setInt('last_edit_date', todayDay);
+    return await box.put('last_edit_date', todayDay);
   }
 }

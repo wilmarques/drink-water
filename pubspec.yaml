@@ -30,6 +30,11 @@ dependencies:
   shared_preferences: ^2.0.8
   provider: ^6.0.1
 
+  # Hive
+  hive: ^2.0.4
+  hive_flutter: ^1.1.0
+  path_provider: ^2.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

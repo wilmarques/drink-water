@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'water_intake_storage.dart';
 
 class WaterIntake extends ChangeNotifier {
-  int _current = 0;
+  late int _current;
   WaterIntakeStorage storage = WaterIntakeStorage();
 
   int get current => _current;
