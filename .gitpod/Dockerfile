@@ -6,8 +6,8 @@ ENV ANDROID_HOME=/home/gitpod/androidsdk
 USER gitpod
 WORKDIR /home/gitpod
 
-RUN git clone https://github.com/flutter/flutter && \
-    /home/gitpod/flutter/bin/flutter channel master && \
+RUN git clone https://github.com/flutter/flutter -b stable && \
+    /home/gitpod/flutter/bin/flutter channel stable && \
     /home/gitpod/flutter/bin/flutter upgrade && \
     /home/gitpod/flutter/bin/flutter precache && \
     /home/gitpod/flutter/bin/flutter --version
