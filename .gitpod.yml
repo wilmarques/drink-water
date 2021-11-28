@@ -17,6 +17,7 @@ ports:
     onOpen: ignore
   - port: 8080
     visibility: public
+    onOpen: open-preview
 
 vscode:
   extensions:

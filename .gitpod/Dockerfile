@@ -18,7 +18,10 @@ RUN cd /home/gitpod \
     && rm -f flutter*.tar.xz
 
 RUN flutter/bin/flutter precache
-RUN echo 'export PATH="$PATH:/home/gitpod/flutter/bin"' >> /home/gitpod/.bashrc
+RUN echo 'export PATH="$PATH:/home/gitpod/flutter/bin"' >> $HOME/.bashrc
+RUN echo 'export PATH="$PATH":"$HOME/flutter/.pub-cache/bin"' >> $HOME/.bashrc
+# Change the PUB_CACHE to /workspace so dependencies are preserved.
+ENV PUB_CACHE=/workspace/.pub_cache
 
 # # Install Open JDK
 # USER root
@@ -44,22 +47,22 @@ RUN echo 'export PATH="$PATH:/home/gitpod/flutter/bin"' >> /home/gitpod/.bashrc
 # RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "system-images;android-30;google_apis;x86_64"
 # RUN echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n avd28 -k "system-images;android-30;google_apis;x86_64"
 
-# Install Google Chrome
-USER root
-RUN apt-get update \
-  && apt-get install -y apt-transport-https \
-  && curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
-  && apt-get update \
-  && sudo apt-get install -y google-chrome-stable
+# # Install Google Chrome
+# USER root
+# RUN apt-get update \
+#   && apt-get install -y apt-transport-https \
+#   && curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+#   && echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+#   && apt-get update \
+#   && sudo apt-get install -y google-chrome-stable
 
-# misc deps
-RUN apt-get install -y \
-  libasound2-dev \
-  libgtk-3-dev \
-  libnss3-dev \
-  fonts-noto \
-  fonts-noto-cjk
+# # misc deps
+# RUN apt-get install -y \
+#   libasound2-dev \
+#   libgtk-3-dev \
+#   libnss3-dev \
+#   fonts-noto \
+#   fonts-noto-cjk
 
-# For Qt WebEngine on docker
-ENV QTWEBENGINE_DISABLE_SANDBOX 1
+# # For Qt WebEngine on docker
+# ENV QTWEBENGINE_DISABLE_SANDBOX 1
