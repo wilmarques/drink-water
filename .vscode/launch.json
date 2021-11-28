@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "drink-water (default)",
+      "request": "launch",
+      "type": "dart",
+      "toolArgs": [
+        "--web-port",
+        "8080"
+      ]
+    },
+    {
       "name": "drink-water (web-server)",
       "request": "launch",
       "type": "dart",
@@ -13,11 +22,6 @@
         "--web-port",
         "8080"
       ]
-    },
-    {
-      "name": "drink-water (default)",
-      "request": "launch",
-      "type": "dart"
     },
     {
       "name": "drink-water (profile mode)",

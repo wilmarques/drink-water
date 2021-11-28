@@ -1,23 +1,33 @@
 image:
   file: .gitpod/Dockerfile
+
 tasks:
-  - init: |
+  - name: VNC Server
+    command: /usr/bin/start-vnc-session.sh
+  - name: Flutter Prep
+    before: |
+      sudo mount -t tmpfs shm -osize=4096m /dev/shm
+    init: |
       flutter doctor
       flutter pub get
+    openMode: split-left
+  - name: Work
+    init: echo 'Welcome!'
+    openMode: tab-after
 
 ports:
   - port: 5900
     onOpen: ignore
     # vnc
   - port: 6080
-    onOpen: ignore
+    onOpen: open-browser
   - port: 5037
     onOpen: ignore
   - port: 9100
     onOpen: ignore
   - port: 8080
     visibility: public
-    onOpen: open-preview
+    onOpen: ignore
 
 vscode:
   extensions:
