@@ -1,3 +1,4 @@
+import 'package:drink_water/intake_model.dart';
 import 'package:hive/hive.dart';
 
 import 'configs/hive_config.dart';
@@ -22,6 +23,10 @@ class WaterIntakeStorage {
 
   Future<void> storeWaterIntake(int value) async {
     _saveLastEditDate();
+    final intakeRecord = WaterIntakeRecordHiveAdapter()
+      ..amount = value
+      ..timestamp = DateTime.now().millisecondsSinceEpoch;
+    await box.add(intakeRecord);
     return await box.put('intake', value);
   }
 
