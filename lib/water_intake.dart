@@ -21,16 +21,16 @@ class WaterIntake extends ChangeNotifier {
     notifyListeners();
   }
 
-  void increment({int ammount = 100}) {
-    _current += ammount;
+  void increment({int amount = 100}) {
+    _current += amount;
     _storeAndNotify(_current);
   }
 
-  void decrease({int ammount = 100}) {
-    if (_current < ammount) {
+  void decrease({int amount = 100}) {
+    if (_current < amount) {
       _current = 0;
     } else {
-      _current -= ammount;
+      _current -= amount;
     }
     _storeAndNotify(_current);
   }

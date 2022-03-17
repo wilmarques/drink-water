@@ -68,7 +68,7 @@ class MyHomePage extends StatelessWidget {
             child: FloatingActionButton.small(
               onPressed: () {
                 final waterIntake = context.read<WaterIntake>();
-                waterIntake.decrease(ammount: defaultIntakeValue);
+                waterIntake.decrease(amount: defaultIntakeValue);
               },
               tooltip: 'Remover $defaultIntakeValue ml',
               child: Icon(Icons.remove),
@@ -79,7 +79,7 @@ class MyHomePage extends StatelessWidget {
             child: FloatingActionButton(
               onPressed: () {
                 final waterIntake = context.read<WaterIntake>();
-                waterIntake.increment(ammount: defaultIntakeValue);
+                waterIntake.increment(amount: defaultIntakeValue);
               },
               tooltip: 'Adicionar $defaultIntakeValue ml',
               child: Icon(Icons.add),
